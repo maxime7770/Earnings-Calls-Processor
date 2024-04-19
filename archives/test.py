@@ -1,3 +1,26 @@
+import src.sentiment_analysis as sentiment_analysis
+import pandas as pd
+
+# df = pd.read_csv('OutputData/output.csv')
+
+# df_sentiment = sentiment_analysis.get_sentiment_bert(df)
+# df_sentiment = sentiment_analysis.get_sentiment_topic(df_sentiment)
+# df_sentiment = sentiment_analysis.aggregate_sentiment(df_sentiment)
+
+# print(df_sentiment.head())
+
+# df_sentiment.to_csv('sentiment_features.csv')
+
+
+# df1 = pd.read_csv('sentiment_features.csv')
+# df2 = pd.read_csv('archives/sentence_with_topics_sentiment_aggregated.csv')
+
+# df = pd.merge(df1, df2, on=['company_name', 'date'], how='inner')
+
+# df.to_csv('test.csv')
+
+
+
 import pandas as pd
 
 

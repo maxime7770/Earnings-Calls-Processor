@@ -9,15 +9,21 @@ tokenizer = transformers.AutoTokenizer.from_pretrained(model_name)
 model = transformers.AutoModelForSequenceClassification.from_pretrained(model_name)
 
 
-def get_sentiment_sentence_bert(text):
-    sentences = text.split('.')
-    list_sentiment = []
-    for sentence in sentences:
-        tokenized = tokenizer(sentence, return_tensors='pt')
+def get_sentiment_sentence_bert(text, already_sentenced=False):
+    if not already_sentenced:
+        sentences = text.split('.')
+        list_sentiment = []
+        for sentence in sentences:
+            tokenized = tokenizer(sentence, return_tensors='pt')
+            output = model(**tokenized)
+            scores = output.logits.softmax(dim=1).detach().numpy()
+            list_sentiment.append(scores[0])
+        return np.mean(list_sentiment, axis=0)
+    else:
+        tokenized = tokenizer(text, return_tensors='pt')
         output = model(**tokenized)
         scores = output.logits.softmax(dim=1).detach().numpy()
-        list_sentiment.append(scores[0])
-    return np.mean(list_sentiment, axis=0)
+        return scores[0]
 
 
 def get_sentiment_bert(data, col='text'):
@@ -85,17 +91,72 @@ topic_sentiment_cols = [f'positive_sentiment_bert_{word}' for word in words] + [
 
 def aggregate_sentiment(data):
 
+    # company
     def mean_company_sentiment(col):
         return col[data['speaker_type'] == 'Corporate Participant'].mean()
+    
+    def std_company_sentiment(col):
+        return col[data['speaker_type'] == 'Corporate Participant'].std()
+    
+    def min_company_sentiment(col):
+        return col[data['speaker_type'] == 'Corporate Participant'].min()
+    
+    def max_company_sentiment(col):
+        return col[data['speaker_type'] == 'Corporate Participant'].max()
+    
+    def median_company_sentiment(col):
+        return col[data['speaker_type'] == 'Corporate Participant'].median()
 
+    # company and presentation
+    def mean_company_presentation_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'presentation')].mean()
+    
+    def std_company_presentation_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'presentation')].std()
+    
+    def min_company_presentation_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'presentation')].min()
+    
+    def max_company_presentation_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'presentation')].max()
+    
+    def median_company_presentation_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'presentation')].median()
+    
+
+    # company and qna
+    def mean_company_qna_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'qna')].mean()
+    
+    def std_company_qna_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'qna')].std()
+    
+    def min_company_qna_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'qna')].min()
+    
+    def max_company_qna_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'qna')].max()
+    
+    def median_company_qna_sentiment(col):
+        return col[(data['speaker_type'] == 'Corporate Participant') & (data['type'] == 'qna')].median()
+    
+
+    # analyst overall
     def mean_analyst_sentiment(col):
         return col[data['speaker_type'] == 'Conference Participant'].mean()
-
-    def mean_presentation_sentiment(col):
-        return col[data['type'] == 'presentation'].mean()
-
-    def mean_qa_sentiment(col):
-        return col[data['type'] == 'qna'].mean()
+    
+    def std_analyst_sentiment(col):
+        return col[data['speaker_type'] == 'Conference Participant'].std()
+    
+    def min_analyst_sentiment(col):
+        return col[data['speaker_type'] == 'Conference Participant'].min()
+    
+    def max_analyst_sentiment(col):
+        return col[data['speaker_type'] == 'Conference Participant'].max()
+    
+    def median_analyst_sentiment(col):
+        return col[data['speaker_type'] == 'Conference Participant'].median()
+    
 
     def mean_topic_sentiment(col):
         if len(col[col != -1]) == 0:
@@ -105,7 +166,11 @@ def aggregate_sentiment(data):
     # for each transcript, average global sentiment, and average sentiment per section and per speaker
     aggregations = dict()
     for col in global_sentiment_cols:
-        aggregations[col] = ['mean', 'std', mean_company_sentiment, mean_analyst_sentiment, mean_presentation_sentiment, mean_qa_sentiment]
+        aggregations[col] = ['mean', 'std', 'median', 'min', 'max',
+                            mean_company_sentiment, std_company_sentiment, min_company_sentiment, max_company_sentiment, median_company_sentiment,
+                            mean_company_presentation_sentiment, std_company_presentation_sentiment, min_company_presentation_sentiment, max_company_presentation_sentiment, median_company_presentation_sentiment,
+                            mean_company_qna_sentiment, std_company_qna_sentiment, min_company_qna_sentiment, max_company_qna_sentiment, median_company_qna_sentiment,
+                            mean_analyst_sentiment, std_analyst_sentiment, min_analyst_sentiment, max_analyst_sentiment, median_analyst_sentiment]
 
     for col in topic_sentiment_cols:
         aggregations[col] = [mean_topic_sentiment]

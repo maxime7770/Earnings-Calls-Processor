@@ -1,4 +1,4 @@
-import src.sentiment_analysis as sentiment_analysis
+# import src.sentiment_analysis as sentiment_analysis
 import pandas as pd
 
 # df = pd.read_csv('OutputData/sentence_level_output.csv')
@@ -40,5 +40,11 @@ df = pd.merge(df1, df2, on=['company_name', 'date'], how='inner')
 df = pd.merge(df, df3, on=['company_name', 'date'], how='inner')
 df = pd.merge(df, df4, on=['company_name', 'date'], how='inner')
 
+for col in df.columns:
+    if 'Unnamed' in col:
+        df.drop([col], axis=1, inplace=True)
 
 df.to_csv('OutputData/final_output.csv')
+
+df = pd.read_csv('OutputData/final_output.csv')
+print(len(df.columns))

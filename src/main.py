@@ -106,7 +106,9 @@ if __name__ == '__main__':
     df = pd.merge(df, df3, on=['company_name', 'date'], how='inner')
     df = pd.merge(df, df4, on=['company_name', 'date'], how='inner')
 
-    df.drop(['Unnamed: 0.1'], axis=1, inplace=True)
+    for col in df.columns:
+        if 'Unnamed' in col:
+            df.drop([col], axis=1, inplace=True)
 
     df.to_csv('OutputData/final_output.csv')
 

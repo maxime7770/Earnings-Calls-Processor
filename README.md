@@ -2,7 +2,7 @@
 
 This project was developed as part of the "Unleashing Novel Data st Scale" at Harvard. It is a collaborative effort by team members [Maxime Wolf](https://www.linkedin.com/in/maxime-wolf/), [Dilan SriDaran](https://www.linkedin.com/in/dilansridaran/) and [Nuobei Zhang](https://www.linkedin.com/in/nuobeizhang/).
 
-You can read the complete report for this project [here](https://maximewolf.com/assets/pdf/Unleashing_Novel_Data.pdf)
+You can read the complete report for this project [here](https://maximewolf.com/assets/pdf/A_Novel_Earnings_Call_Dataset_for_Stock_Return_Prediction.pdf)
 
 ## How to run the project
 
